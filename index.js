@@ -1,28 +1,37 @@
-const Discord = require('discord.js');
-const bot = new Discord.Client();
+const express = require('express')
+const app = express()
+const exphbs = require("express-handlebars")
+const bodyParser = require('body-parser');
+const path = require('path');
+
+bot = require('./bot.js')
+
 require('dotenv').config()
 
-const token = process.env.token
+app.use(bodyParser.urlencoded({ extended: true }));
 
-bot.on('ready',() =>{
-  console.log("amongo running")
-})
-bot.on('message', (msg) =>{
-  if (msg.author == bot.user){
-    return;
-  }
 
-  let channel;
-  // loop through channels to find correct voice channel
-  bot.channels.cache.forEach((value, key) =>{
-    if (value.name == msg.content && value.type == 'voice'){
-      channel = value
-      return;
-    }
-  })
-  // loop through members and set mute or unmute
-  channel.members.forEach((value,key) =>{
-      value.voice.setMute(!value.voice.mute)
-  })
+app.set("views", path.join(__dirname,"views"));
+app.engine(".hbs",exphbs({
+  defaultLayout:"main",
+  layoutsDir: path.join(__dirname,"views/layouts"),
+  partialsDir: path.join(__dirname,"views/partials"),
+  extname:".hbs"
+}));
+app.set("view engine",".hbs")
+let voiceChannel;
+app.get('/', (req, res) => {
+  res.render('homepage',{voiceChannel:voiceChannel})
 })
-bot.login(token)
+
+app.post('/mute', (req, res) => {
+  voiceChannel = req.body.voice
+  // execute code to mute
+  console.log("checkpoint")
+  bot.mute(voiceChannel)
+  res.redirect('/')
+})
+
+app.listen(process.env.PORT, () => {
+  console.log(`Example app listening at http://localhost:${process.env.PORT}`)
+})
