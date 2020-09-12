@@ -8,17 +8,21 @@ bot.on('ready',() =>{
   console.log("amongo running")
 })
 bot.on('message', (msg) =>{
-  let channel = msg.member.voice.channel;
-  if(msg.content=="mute"){
-    channel.members.forEach((value,key) =>{
-      value.voice.setMute(true)
-    })
-    msg.reply("muting")
-  }else if (msg.content == "unmute"){
-    channel.members.forEach((value,key) =>{
-      value.voice.setMute(false)
+  if (msg.author == bot.user){
+    return;
+  }
+
+  let channel;
+  // loop through channels to find correct voice channel
+  bot.channels.cache.forEach((value, key) =>{
+    if (value.name == msg.content && value.type == 'voice'){
+      channel = value
+      return;
+    }
   })
-  msg.reply("unmuting")
-}
+  // loop through members and set mute or unmute
+  channel.members.forEach((value,key) =>{
+      value.voice.setMute(!value.voice.mute)
+  })
 })
 bot.login(token)
