@@ -27,7 +27,6 @@ app.get('/', (req, res) => {
 app.post('/mute', (req, res) => {
   voiceChannel = req.body.voice
   // execute code to mute
-  console.log("checkpoint")
   bot.mute(voiceChannel)
   res.redirect('/')
 })

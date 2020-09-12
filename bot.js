@@ -5,7 +5,7 @@ require('dotenv').config()
 const token = process.env.token
 
 bot.on('ready',() =>{
-  console.log("amongo running")
+  console.log("Amongo Bot Running")
 })
 // bot.on('message', (msg) =>{
 //   if (msg.author == bot.user){
